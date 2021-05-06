@@ -100,8 +100,6 @@ Models = {
 		  [0,1,0]]]
 }
 
-modeloAtual = "S"
-
 class Board:
 	def DrawGrid(s=[16,24],size=25,begin=(0,0),color=(20,20,20)):
 		sx,sy = s
@@ -118,8 +116,59 @@ class Board:
 	def DrawHeader(size=100,color=(255,255,255)):
 		pygame.draw.rect(Window, color, [0,0,400,size])
 
-	def Stamp():
-		pass
+	def Stamp(shape,direction,pos):
+		global boardArray
+		global Models
+		shapeArray = Models[shape][direction]
+		posX, posY = pos
+		for l in range(0,3):
+			posY = pos[1]
+			posY = posY + l
+			for i in range(0,3):
+				posX = pos[0]
+				posX = posX + i
+				if Models[shape][direction][l][i] == 1:
+					boardArray[posY][posX] = shape
+
+	def Rearrange(array):
+		arrayX = len(array[0])
+		arrayY = len(array)
+		for l in range(0,arrayY):
+			for i in range(0,arrayX):
+				posX = (i+2) * 25
+				posY = (l+3) * 25
+				if array[l][i] == "S":
+					colorShape = (255,255,0)
+					pygame.draw.rect(Window, colorShape, [posX,posY,25,25])
+				if array[l][i] == "L":
+					colorShape = (0,255,0)
+					pygame.draw.rect(Window, colorShape, [posX,posY,25,25])
+				if array[l][i] == "O":
+					colorShape = (0,0,255)
+					pygame.draw.rect(Window, colorShape, [posX,posY,25,25])
+				if array[l][i] == "T":
+					colorShape = (255,0,0)
+					pygame.draw.rect(Window, colorShape, [posX,posY,25,25])
+				if array[l][i] == "H":
+					colorShape = (255,0,255)
+					pygame.draw.rect(Window, colorShape, [posX,posY,25,25])
+				if array[l][i] == "I":
+					colorShape = (0,255,255)
+					pygame.draw.rect(Window, colorShape, [posX,posY,25,25])
+				if array[l][i] == "V":
+					colorShape = (255,55,0)
+					pygame.draw.rect(Window, colorShape, [posX,posY,25,25])
+				if array[l][i] == "Z":
+					colorShape = (20,0,110)
+					pygame.draw.rect(Window, colorShape, [posX,posY,25,25])
+				if array[l][i] == ".":
+					colorShape = (45,25,0)
+					pygame.draw.rect(Window, colorShape, [posX,posY,25,25])
+				if array[l][i] == "+":
+					colorShape = (80,80,80)
+					pygame.draw.rect(Window, colorShape, [posX,posY,25,25])
+
+
 
 class Pieces:
 	def Raffle():
@@ -149,24 +198,119 @@ class Pieces:
 				if Models[shape][direction][l][i] == 1:
 					pygame.draw.rect(Window, colorShape, [beginX,beginY,25,25])
 
-	def Rotate(direction=0)
+	def AdjustCollision(shape,direction,mousePos):
+		mouseX, mouseY = mousePos
+		if shape == "S" or shape == "Z" or shape == "+" or shape == "T" or shape == "H" or shape == "V":
+			if mouseX > 275: mouseX = 275
+			if mouseX < 50: mouseX = 50
+			if mouseY > 500: mouseY = 500
+			if mouseY < 75: mouseY = 75
+		if shape == "L" and direction == 0:
+			if mouseX > 300: mouseX = 300
+			if mouseX < 50: mouseX = 50
+			if mouseY > 500: mouseY = 500
+			if mouseY < 75: mouseY = 75
+		if shape == "L" and direction == 1:
+			if mouseX > 275: mouseX = 275
+			if mouseX < 50: mouseX = 50
+			if mouseY > 500: mouseY = 500
+			if mouseY < 50: mouseY = 50
+		if shape == "L" and direction == 2:
+			if mouseX > 275: mouseX = 275
+			if mouseX < 25: mouseX = 25
+			if mouseY > 500: mouseY = 500
+			if mouseY < 75: mouseY = 75
+		if shape == "L" and direction == 3:
+			if mouseX > 275: mouseX = 275
+			if mouseX < 50: mouseX = 50
+			if mouseY > 525: mouseY = 525
+			if mouseY < 75: mouseY = 75
+		if shape == "I" and direction == 0:
+			if mouseX > 300: mouseX = 300
+			if mouseX < 25: mouseX = 25
+			if mouseY > 500: mouseY = 500
+			if mouseY < 75: mouseY = 75
+		if shape == "I" and direction == 1:
+			if mouseX > 275: mouseX = 275
+			if mouseX < 50: mouseX = 50
+			if mouseY > 525: mouseY = 525
+			if mouseY < 50: mouseY = 50
+		if shape == ".":
+			if mouseX > 300: mouseX = 300
+			if mouseX < 25: mouseX = 25
+			if mouseY > 525: mouseY = 525
+			if mouseY < 50: mouseY = 50
+		if shape == "O":
+			if mouseX > 300: mouseX = 300
+			if mouseX < 50: mouseX = 50
+			if mouseY > 525: mouseY = 525
+			if mouseY < 75: mouseY = 75
+		return (mouseX//25,mouseY//25)
 
 
+
+modeloAtual = Pieces.Raffle()
+dirAtual = 0
+boardArray = [
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""],
+["","","","","","","","","","","",""]]
 
 while True:
 	Window.fill((0,0,0))
+	
+	Mouse = pygame.mouse.get_pos() 
+	MouseXA, MouseYA = Pieces.AdjustCollision(modeloAtual,dirAtual,Mouse)
+
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			pygame.quit()
 			exit(0)
 		if event.type == pygame.MOUSEBUTTONUP:
+			dirAtual = 0
 			modeloAtual = Pieces.Raffle()
-			print(modeloAtual)
+			#print(modeloAtual)
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_SPACE:
+				dirAtual = dirAtual + 1
+				if modeloAtual == "S" and dirAtual > 1: dirAtual = 0
+				if modeloAtual == "L" and dirAtual > 3: dirAtual = 0
+				if modeloAtual == "O" and dirAtual > 0: dirAtual = 0
+				if modeloAtual == "T" and dirAtual > 3: dirAtual = 0
+				if modeloAtual == "H" and dirAtual > 1: dirAtual = 0
+				if modeloAtual == "I" and dirAtual > 1: dirAtual = 0
+				if modeloAtual == "V" and dirAtual > 3: dirAtual = 0
+				if modeloAtual == "Z" and dirAtual > 1: dirAtual = 0
+				if modeloAtual == "." and dirAtual > 0: dirAtual = 0
+				if modeloAtual == "+" and dirAtual > 0: dirAtual = 0
+			if event.key == pygame.K_m:
+				Board.Stamp(modeloAtual,dirAtual,[MouseXA-2,MouseYA-3])
 
-	Mouse = pygame.mouse.get_pos()
-	MouseX, MouseY = Mouse
-	Board.DrawGrid([14,20],25,[25,75],(255,0,0))
-	# quadro = 
+	Board.DrawGrid([12,20],25,[50,75])
+	Board.DrawHeader(50,(50,50,50))
+	Pieces.Draw(modeloAtual, dirAtual,[MouseXA*25,MouseYA*25])
+	Board.Rearrange(boardArray)
+	pygame.display.update()
+
+
+# quadro = 
 	# ["_","_","_","_","_","_","_"]
 	# ["_","_","_","_","_","_","_"]
 	# ["_","_","_","_","_","_","_"]
@@ -180,22 +324,3 @@ while True:
 	# ["_","S","O","O","_","_","_"]
 	#if not("_" in quadro[0]):
 	#	pass
-	
-	Board.DrawHeader(50,(50,50,50))
-	Pieces.Draw(modeloAtual, 0,[MouseX//25*25,MouseY//25*25])
-	pygame.display.update()
-
-
-# for i in range(100, 600, 25):
-# 	pygame.draw.rect(Window, (i,0,0), [0,i,25,25])
-# 	pygame.draw.rect(Window, (0,i,0), [25,i,25,25])
-# 	pygame.draw.rect(Window, (0,0,i), [50,i,25,25])
-# 	pygame.draw.rect(Window, (i,0,0), [75,i,25,25])
-# 	pygame.draw.rect(Window, (0,i,0), [100,i,25,25])
-# 	pygame.draw.rect(Window, (0,0,i), [125,i,25,25])
-# 	pygame.draw.rect(Window, (i,0,0), [150,i,25,25])
-# 	pygame.draw.rect(Window, (0,i,0), [175,i,25,25])
-# 	pygame.draw.rect(Window, (0,0,i), [200,i,25,25])
-# 	pygame.draw.rect(Window, (i,0,0), [225,i,25,25])
-# 	pygame.draw.rect(Window, (0,i,0), [250,i,25,25])
-# 	pygame.draw.rect(Window, (0,0,i), [275,i,25,25])
