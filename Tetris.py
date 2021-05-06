@@ -117,8 +117,6 @@ class Board:
 		pygame.draw.rect(Window, color, [0,0,400,size])
 
 	def Stamp(shape,direction,pos):
-		global boardArray
-		global Models
 		shapeArray = Models[shape][direction]
 		posX, posY = pos
 		for l in range(0,3):
@@ -168,6 +166,24 @@ class Board:
 					colorShape = (80,80,80)
 					pygame.draw.rect(Window, colorShape, [posX,posY,25,25])
 
+	def ValidateString(array):
+		global boardArray
+		arrayX = len(array[0])
+		arrayY = len(array)
+		for l in range(0,arrayY):
+			for i in range(0,arrayX):
+				if array[l][i] != "":
+					clear = True
+				else:
+					clear = False
+					break
+			if clear:
+				array[l] = []
+				for a in range(0, arrayX):
+					array[l].append("")
+					boardArray = array
+				for i in range(0,13):
+					print(array[i])
 
 
 class Pieces:
@@ -307,20 +323,5 @@ while True:
 	Board.DrawHeader(50,(50,50,50))
 	Pieces.Draw(modeloAtual, dirAtual,[MouseXA*25,MouseYA*25])
 	Board.Rearrange(boardArray)
+	Board.ValidateString(boardArray)
 	pygame.display.update()
-
-
-# quadro = 
-	# ["_","_","_","_","_","_","_"]
-	# ["_","_","_","_","_","_","_"]
-	# ["_","_","_","_","_","_","_"]
-	# ["_","_","_","_","_","_","_"]
-	# ["_","_","_","_","_","_","_"]
-	# ["_","_","_","_","_","_","_"]
-	# ["_","_","_","_","_","_","_"]
-	# ["_","_","_","_","_","_","_"]
-	# ["_","_","_","_","_","_","_"]
-	# ["_","S","S","_","_","_","_"]
-	# ["_","S","O","O","_","_","_"]
-	#if not("_" in quadro[0]):
-	#	pass
