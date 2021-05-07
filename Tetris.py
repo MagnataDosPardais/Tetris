@@ -127,6 +127,8 @@ class Board:
 				posX = posX + i
 				if Models[shape][direction][l][i] == 1:
 					boardArray[posY][posX] = shape
+		for nl in range(0,20):
+			print(boardArray[nl])
 
 	def Rearrange(array):
 		arrayX = len(array[0])
@@ -169,21 +171,23 @@ class Board:
 	def ValidateString(array):
 		global boardArray
 		arrayX = len(array[0])
+		newLine = array[0]
 		arrayY = len(array)
 		for l in range(0,arrayY):
 			for i in range(0,arrayX):
-				if array[l][i] != "":
+				if array[l][i] != " ":
 					clear = True
 				else:
 					clear = False
 					break
 			if clear:
-				array[l] = []
-				for a in range(0, arrayX):
-					array[l].append("")
-					boardArray = array
-				for i in range(0,13):
+				print(f"Line:[{l}]/Column:[{i}]")
+				array.pop(l)	
+				array.insert(0,newLine)
+				boardArray = array
+				for ln in range(0,20):
 					print(array[i])
+				print("---------------------------------------------")
 
 
 class Pieces:
@@ -206,6 +210,7 @@ class Pieces:
 			beginX, beginY = begin
 			beginY = beginY + (l*25) + 1
 			#print(f"Line[{l}]: {Models[shape][direction][l]}")
+			#print(shape, direction)
 			for i in range(0,3):
 				#print(f"Char[{i}]: {Models[shape][direction][l][i]}")
 				beginX = begin[0] + 1
@@ -215,86 +220,133 @@ class Pieces:
 					pygame.draw.rect(Window, colorShape, [beginX,beginY,25,25])
 
 	def AdjustCollision(shape,direction,mousePos):
+		global dirAtual
 		mouseX, mouseY = mousePos
+		newShape = [False,shape]
 		if shape == "S" or shape == "Z" or shape == "+" or shape == "T" or shape == "H" or shape == "V":
 			if mouseX > 275: mouseX = 275
 			if mouseX < 50: mouseX = 50
-			if mouseY > 500: mouseY = 500
+			if mouseY > 500:
+				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+				Board.ValidateString(boardArray)
+				mouseY = 75
+				newShape[0] = True
+				dirAtual = 0
 			if mouseY < 75: mouseY = 75
-		if shape == "L" and direction == 0:
+		elif shape == "L" and direction == 0:
 			if mouseX > 300: mouseX = 300
 			if mouseX < 50: mouseX = 50
-			if mouseY > 500: mouseY = 500
+			if mouseY > 500:
+				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+				Board.ValidateString(boardArray)
+				mouseY = 75
+				newShape[0] = True
+				dirAtual = 0
 			if mouseY < 75: mouseY = 75
-		if shape == "L" and direction == 1:
+		elif shape == "L" and direction == 1:
 			if mouseX > 275: mouseX = 275
 			if mouseX < 50: mouseX = 50
-			if mouseY > 500: mouseY = 500
+			if mouseY > 500:
+				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+				Board.ValidateString(boardArray)
+				mouseY = 50
+				newShape[0] = True
+				dirAtual = 0
 			if mouseY < 50: mouseY = 50
-		if shape == "L" and direction == 2:
+		elif shape == "L" and direction == 2:
 			if mouseX > 275: mouseX = 275
 			if mouseX < 25: mouseX = 25
-			if mouseY > 500: mouseY = 500
+			if mouseY > 500:
+				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+				Board.ValidateString(boardArray)
+				mouseY = 75
+				newShape[0] = True
+				dirAtual = 0
 			if mouseY < 75: mouseY = 75
-		if shape == "L" and direction == 3:
+		elif shape == "L" and direction == 3:
 			if mouseX > 275: mouseX = 275
 			if mouseX < 50: mouseX = 50
-			if mouseY > 525: mouseY = 525
+			if mouseY > 525: 
+				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+				Board.ValidateString(boardArray)
+				mouseY = 75
+				newShape[0] = True
+				dirAtual = 0
 			if mouseY < 75: mouseY = 75
-		if shape == "I" and direction == 0:
+		elif shape == "I" and direction == 0:
 			if mouseX > 300: mouseX = 300
 			if mouseX < 25: mouseX = 25
-			if mouseY > 500: mouseY = 500
+			if mouseY > 500:
+				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+				Board.ValidateString(boardArray)
+				mouseY = 75
+				newShape[0] = True
+				dirAtual = 0
 			if mouseY < 75: mouseY = 75
-		if shape == "I" and direction == 1:
+		elif shape == "I" and direction == 1:
 			if mouseX > 275: mouseX = 275
 			if mouseX < 50: mouseX = 50
-			if mouseY > 525: mouseY = 525
+			if mouseY > 525:
+				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+				Board.ValidateString(boardArray)
+				mouseY = 50
+				newShape[0] = True
+				dirAtual = 0
 			if mouseY < 50: mouseY = 50
-		if shape == ".":
+		elif shape == ".":
 			if mouseX > 300: mouseX = 300
 			if mouseX < 25: mouseX = 25
-			if mouseY > 525: mouseY = 525
+			if mouseY > 525:
+				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+				Board.ValidateString(boardArray)
+				mouseY = 50
+				newShape[0] = True
+				dirAtual = 0
 			if mouseY < 50: mouseY = 50
-		if shape == "O":
+		elif shape == "O":
 			if mouseX > 300: mouseX = 300
 			if mouseX < 50: mouseX = 50
-			if mouseY > 525: mouseY = 525
+			if mouseY > 525:
+				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+				Board.ValidateString(boardArray)
+				mouseY = 75
+				newShape[0] = True
+				dirAtual = 0
 			if mouseY < 75: mouseY = 75
-		return (mouseX//25,mouseY//25)
+		if newShape[0] == True: newShape[1] = Pieces.Raffle()
+		return (mouseX,mouseY,"O")
+
 
 
 
 modeloAtual = Pieces.Raffle()
 dirAtual = 0
 boardArray = [
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""],
-["","","","","","","","","","","",""]]
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "],
+[" "," "," "," "," "," "," "," "," "," "," "," "]]
+begX = 150
+begY = 75
 
 while True:
 	Window.fill((0,0,0))
-	
-	Mouse = pygame.mouse.get_pos() 
-	MouseXA, MouseYA = Pieces.AdjustCollision(modeloAtual,dirAtual,Mouse)
-
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			pygame.quit()
@@ -316,12 +368,16 @@ while True:
 				if modeloAtual == "Z" and dirAtual > 1: dirAtual = 0
 				if modeloAtual == "." and dirAtual > 0: dirAtual = 0
 				if modeloAtual == "+" and dirAtual > 0: dirAtual = 0
-			if event.key == pygame.K_m:
-				Board.Stamp(modeloAtual,dirAtual,[MouseXA-2,MouseYA-3])
+			if event.key == pygame.K_a and not(event.key == pygame.K_d):
+				begX = begX - 25
+			if event.key == pygame.K_d and not(event.key == pygame.K_a):
+				begX = begX + 25
 
+	begX,begY,modeloAtual = Pieces.AdjustCollision(modeloAtual,dirAtual,[begX,begY])
 	Board.DrawGrid([12,20],25,[50,75])
 	Board.DrawHeader(50,(50,50,50))
-	Pieces.Draw(modeloAtual, dirAtual,[MouseXA*25,MouseYA*25])
+	Pieces.Draw(modeloAtual,dirAtual,[begX,begY])
 	Board.Rearrange(boardArray)
-	Board.ValidateString(boardArray)
+	pygame.time.delay(120)
+	begY = begY + 25
 	pygame.display.update()
