@@ -98,6 +98,7 @@ Models = {
 	"+":[[[0,1,0],
 		  [1,1,1],
 		  [0,1,0]]]
+#----------------------------------------------
 }
 
 class Board:
@@ -117,18 +118,21 @@ class Board:
 		pygame.draw.rect(Window, color, [0,0,400,size])
 
 	def Stamp(shape,direction,pos):
-		shapeArray = Models[shape][direction]
 		posX, posY = pos
+		#print(f"Coo={pos}, Format={shape}")
 		for l in range(0,3):
 			posY = pos[1]
 			posY = posY + l
 			for i in range(0,3):
 				posX = pos[0]
 				posX = posX + i
+				#print(f"X={posX}, Y={posY}")
 				if Models[shape][direction][l][i] == 1:
 					boardArray[posY][posX] = shape
+					#print(boardArray[posY][posX])
 		for nl in range(0,20):
 			print(boardArray[nl])
+
 
 	def Rearrange(array):
 		arrayX = len(array[0])
@@ -170,24 +174,24 @@ class Board:
 
 	def ValidateString(array):
 		global boardArray
+		newLine = []
 		arrayX = len(array[0])
-		newLine = array[0]
 		arrayY = len(array)
-		for l in range(0,arrayY):
-			for i in range(0,arrayX):
-				if array[l][i] != " ":
-					clear = True
-				else:
-					clear = False
-					break
-			if clear:
-				print(f"Line:[{l}]/Column:[{i}]")
-				array.pop(l)	
+		#print(newLine)
+		#print(f"X={arrayX} / Y={arrayY}")
+		for l in range(arrayY-1,-1,-1):		
+			if not(" " in array[l]):
+				for c in range(0, arrayX):
+					newLine.append(" ")
+				print(f"C=Line:[{l}]")
+				array.pop(l)
 				array.insert(0,newLine)
 				boardArray = array
-				for ln in range(0,20):
-					print(array[i])
-				print("---------------------------------------------")
+				newLine = []
+				pygame.time.delay(200)
+		for ln in range(0,20):
+			print(boardArray[ln])
+		print("---------------------------------------------")
 
 
 class Pieces:
@@ -219,103 +223,195 @@ class Pieces:
 				if Models[shape][direction][l][i] == 1:
 					pygame.draw.rect(Window, colorShape, [beginX,beginY,25,25])
 
-	def AdjustCollision(shape,direction,mousePos):
+	def AdjustCollision(shape,direction,mousePos,array):
 		global dirAtual
+		global boardArray
 		mouseX, mouseY = mousePos
+		arrayX = len(array[0])
+		arrayY = len(array)
+		listGround = []
+		limitPieceB = []
+		limitPieceL = []
+		limitPieceR = []
 		newShape = [False,shape]
+
+#------------------------------------------------------------------------------------
+		for i in range(0,arrayX):
+			for l in range(0,arrayY):
+				if array[l][i] != " ":
+					listGround.append((l)*25)
+					break
+				if l == arrayY-1 and (array[l][i] == " "):
+					listGround.append((arrayY)*25)
+		print(f"Col={listGround}")
+
+		for v in range(0,3):
+			for h in range(2,-1,-1):
+				if Models[shape][direction][h][v]:
+					limitPieceB.append(h)
+					break
+				if h == 0 and (Models[shape][direction][h][v] == 0):
+					limitPieceB.append(-1)
+		print(f"Base={limitPieceB}")
+
+		for h in range(2,-1,-1):
+			for v in range(0,3):
+				if Models[shape][direction][h][v]:
+					limitPieceL.append(v)
+					break
+				if v == 2 and (Models[shape][direction][h][v] == 0):
+					limitPieceL.append(-1)
+		print(f"Esq={limitPieceL}")
+
+		for h in range(2,-1,-1):
+			for v in range(2,-1,-1):
+				if Models[shape][direction][h][v]:
+					limitPieceR.append(v*-1+2)
+					break
+				if v == 0 and (Models[shape][direction][h][v] == 0):
+					limitPieceR.append(-1)
+		print(f"Dir={limitPieceR}")
+#------------------------------------------------------------------------------------		
+
 		if shape == "S" or shape == "Z" or shape == "+" or shape == "T" or shape == "H" or shape == "V":
 			if mouseX > 275: mouseX = 275
 			if mouseX < 50: mouseX = 50
-			if mouseY > 500:
-				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
-				Board.ValidateString(boardArray)
-				mouseY = 75
-				newShape[0] = True
-				dirAtual = 0
-			if mouseY < 75: mouseY = 75
 		elif shape == "L" and direction == 0:
 			if mouseX > 300: mouseX = 300
 			if mouseX < 50: mouseX = 50
-			if mouseY > 500:
-				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
-				Board.ValidateString(boardArray)
-				mouseY = 75
-				newShape[0] = True
-				dirAtual = 0
-			if mouseY < 75: mouseY = 75
 		elif shape == "L" and direction == 1:
 			if mouseX > 275: mouseX = 275
 			if mouseX < 50: mouseX = 50
-			if mouseY > 500:
-				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
-				Board.ValidateString(boardArray)
-				mouseY = 50
-				newShape[0] = True
-				dirAtual = 0
-			if mouseY < 50: mouseY = 50
 		elif shape == "L" and direction == 2:
 			if mouseX > 275: mouseX = 275
 			if mouseX < 25: mouseX = 25
-			if mouseY > 500:
-				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
-				Board.ValidateString(boardArray)
-				mouseY = 75
-				newShape[0] = True
-				dirAtual = 0
-			if mouseY < 75: mouseY = 75
 		elif shape == "L" and direction == 3:
 			if mouseX > 275: mouseX = 275
 			if mouseX < 50: mouseX = 50
-			if mouseY > 525: 
-				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
-				Board.ValidateString(boardArray)
-				mouseY = 75
-				newShape[0] = True
-				dirAtual = 0
-			if mouseY < 75: mouseY = 75
 		elif shape == "I" and direction == 0:
 			if mouseX > 300: mouseX = 300
 			if mouseX < 25: mouseX = 25
-			if mouseY > 500:
-				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
-				Board.ValidateString(boardArray)
-				mouseY = 75
-				newShape[0] = True
-				dirAtual = 0
-			if mouseY < 75: mouseY = 75
 		elif shape == "I" and direction == 1:
 			if mouseX > 275: mouseX = 275
 			if mouseX < 50: mouseX = 50
-			if mouseY > 525:
-				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
-				Board.ValidateString(boardArray)
-				mouseY = 50
-				newShape[0] = True
-				dirAtual = 0
-			if mouseY < 50: mouseY = 50
 		elif shape == ".":
 			if mouseX > 300: mouseX = 300
 			if mouseX < 25: mouseX = 25
-			if mouseY > 525:
-				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
-				Board.ValidateString(boardArray)
-				mouseY = 50
-				newShape[0] = True
-				dirAtual = 0
-			if mouseY < 50: mouseY = 50
 		elif shape == "O":
 			if mouseX > 300: mouseX = 300
 			if mouseX < 50: mouseX = 50
-			if mouseY > 525:
-				Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
-				Board.ValidateString(boardArray)
-				mouseY = 75
-				newShape[0] = True
-				dirAtual = 0
-			if mouseY < 75: mouseY = 75
-		if newShape[0] == True: newShape[1] = Pieces.Raffle()
-		return (mouseX,mouseY,"O")
 
+
+		print(shape)
+		print(f"Y={mouseY}")
+		print(f"X={mouseX}")
+		for c in range(0,3):
+			#print(f"index={((mouseX//25)-2)+c}")
+			if(limitPieceB[c] != -1):
+				#print(f"limIndex[{((mouseX//25)-2)+c}]={listGround[((mouseX//25)-2)+c]-(limitPieceB[c]*25)}")
+				#print(f"SP{listGround[((mouseX//25)-2)+c]}/IP={mouseY+(limitPieceB[c]*25)}")
+				if listGround[((mouseX//25)-2)+c] <= mouseY+(limitPieceB[c]*25)-75:
+					Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+					mouseX = 150
+					mouseY = 75
+					newShape[0] = True
+					dirAtual = 0
+					#print("A")
+					pass
+
+		if newShape[0] == True: newShape[1] = Pieces.Raffle()
+		return (mouseX,mouseY,newShape[1])
+
+		# #if shape == "S" or shape == "Z" or shape == "+" or shape == "T" or shape == "H" or shape == "V":
+		# 	if mouseX > 275: mouseX = 275
+		# 	if mouseX < 50: mouseX = 50
+		# 	if mouseY > 500:
+		# 		Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+		# 		mouseX = 150
+		# 		mouseY = 75
+		# 		newShape[0] = True
+		# 		dirAtual = 0
+		# 	if mouseY < 75: mouseY = 75
+		# #elif shape == "L" and direction == 0:
+		# 	if mouseX > 300: mouseX = 300
+		# 	if mouseX < 50: mouseX = 50
+		# 	if mouseY > 500:
+		# 		Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+		# 		mouseX = 150
+		# 		mouseY = 75
+		# 		newShape[0] = True
+		# 		dirAtual = 0
+		# 	if mouseY < 75: mouseY = 75
+		# #elif shape == "L" and direction == 1:
+		# 	if mouseX > 275: mouseX = 275
+		# 	if mouseX < 50: mouseX = 50
+		# 	if mouseY > 500:
+		# 		Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+		# 		mouseX = 150
+		# 		mouseY = 50
+		# 		newShape[0] = True
+		# 		dirAtual = 0
+		# 	if mouseY < 50: mouseY = 50
+		# #elif shape == "L" and direction == 2:
+		# 	if mouseX > 275: mouseX = 275
+		# 	if mouseX < 25: mouseX = 25
+		# 	if mouseY > 500:
+		# 		Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+		# 		mouseX = 150
+		# 		mouseY = 75
+		# 		newShape[0] = True
+		# 		dirAtual = 0
+		# 	if mouseY < 75: mouseY = 75
+		# #elif shape == "L" and direction == 3:
+		# 	if mouseX > 275: mouseX = 275
+		# 	if mouseX < 50: mouseX = 50
+		# 	if mouseY > 525: 
+		# 		Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+		# 		mouseX = 150
+		# 		mouseY = 75
+		# 		newShape[0] = True
+		# 		dirAtual = 0
+		# 	if mouseY < 75: mouseY = 75
+		# #elif shape == "I" and direction == 0:
+		# 	if mouseX > 300: mouseX = 300
+		# 	if mouseX < 25: mouseX = 25
+		# 	if mouseY > 500:
+		# 		Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+		# 		mouseX = 150
+		# 		mouseY = 75
+		# 		newShape[0] = True
+		# 		dirAtual = 0
+		# 	if mouseY < 75: mouseY = 75
+		# #elif shape == "I" and direction == 1:
+		# 	if mouseX > 275: mouseX = 275
+		# 	if mouseX < 50: mouseX = 50
+		# 	if mouseY > 525:
+		# 		Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+		# 		mouseX = 150
+		# 		mouseY = 50
+		# 		newShape[0] = True
+		# 		dirAtual = 0
+		# 	if mouseY < 50: mouseY = 50
+		# #elif shape == ".":
+		# 	if mouseX > 325: mouseX = 325
+		# 	if mouseX < 50: mouseX = 50
+		# 	if mouseY > 525:
+		# 		Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+		# 		mouseX = 150
+		# 		mouseY = 50
+		# 		newShape[0] = True
+		# 		dirAtual = 0
+		# 	if mouseY < 50: mouseY = 50
+		# #elif shape == "O":
+		# 	if mouseX > 300: mouseX = 300
+		# 	if mouseX < 50: mouseX = 50
+		# 	if mouseY > 525:
+		# 		Board.Stamp(modeloAtual,dirAtual,[(mouseX//25-2),(mouseY//25-4)])
+		# 		mouseX = 150
+		# 		mouseY = 75
+		# 		newShape[0] = True
+		# 		dirAtual = 0
+		# 	if mouseY < 75: mouseY = 75
 
 
 
@@ -344,6 +440,8 @@ boardArray = [
 [" "," "," "," "," "," "," "," "," "," "," "," "]]
 begX = 150
 begY = 75
+deltaV = 0
+clock = pygame.time.Clock()
 
 while True:
 	Window.fill((0,0,0))
@@ -351,10 +449,10 @@ while True:
 		if event.type == pygame.QUIT:
 			pygame.quit()
 			exit(0)
-		if event.type == pygame.MOUSEBUTTONUP:
-			dirAtual = 0
-			modeloAtual = Pieces.Raffle()
-			#print(modeloAtual)
+		#if event.type == pygame.MOUSEBUTTONUP:
+		#	dirAtual = 0
+		#	modeloAtual = Pieces.Raffle()
+		#	print(modeloAtual)
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_SPACE:
 				dirAtual = dirAtual + 1
@@ -368,16 +466,31 @@ while True:
 				if modeloAtual == "Z" and dirAtual > 1: dirAtual = 0
 				if modeloAtual == "." and dirAtual > 0: dirAtual = 0
 				if modeloAtual == "+" and dirAtual > 0: dirAtual = 0
-			if event.key == pygame.K_a and not(event.key == pygame.K_d):
+			if event.key == pygame.K_a and event.key == pygame.K_d:
+				pass
+			elif event.key == pygame.K_a:
 				begX = begX - 25
-			if event.key == pygame.K_d and not(event.key == pygame.K_a):
+			elif event.key == pygame.K_d:
 				begX = begX + 25
 
-	begX,begY,modeloAtual = Pieces.AdjustCollision(modeloAtual,dirAtual,[begX,begY])
+	Key = pygame.key.get_pressed()
+	if Key[ord("s")]:
+		deltaV = 20
+	else:
+		deltaV = 6
+	if Key[ord("a")] and not(Key[ord("d")]):
+		begX = begX - 25
+		pygame.time.delay(90)
+	if Key[ord("d")] and not(Key[ord("a")]):
+		begX = begX + 25
+		pygame.time.delay(90)
+
+	begX,begY,modeloAtual = Pieces.AdjustCollision(modeloAtual,dirAtual,[begX,begY],boardArray)
+	Board.ValidateString(boardArray)
+	Board.Rearrange(boardArray)
+	Pieces.Draw(modeloAtual,dirAtual,[begX,begY])
 	Board.DrawGrid([12,20],25,[50,75])
 	Board.DrawHeader(50,(50,50,50))
-	Pieces.Draw(modeloAtual,dirAtual,[begX,begY])
-	Board.Rearrange(boardArray)
-	pygame.time.delay(120)
+	clock.tick(deltaV)
 	begY = begY + 25
 	pygame.display.update()
