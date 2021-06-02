@@ -125,8 +125,8 @@ class Board:
 		self.lenArray = [len(self.array[0]),len(self.array)]
 		self.size = size
 
-	def DrawGrid(self,s,align,color=(20,20,20),bg=(0,0,0)):
-		sx,sy = s
+	def DrawGrid(self,align,color=(20,20,20)):
+		sx,sy = self.lenArray
 		sx = int((sx * self.size) + 1)
 		sy = int((sy * self.size) + 1)
 		if align.upper() == "CENTER":
@@ -834,7 +834,7 @@ while True:
 		#Draw Currently Piece:
 		Piece.Draw(P[0],P[1],P[2],texture[selectTexture])
 		#Grid:
-		B.DrawGrid(B.lenArray,"CENTER",colors[selectColor][1],colors[selectColor][0])
+		B.DrawGrid("CENTER",colors[selectColor][1])
 		#Read colors:
 		freeLeft,freeFall,freeRight = Piece.sensorsRead(P[0],P[1],[P[2][0]*25+50,P[2][1]*25+75])
 		#CheckLines:
